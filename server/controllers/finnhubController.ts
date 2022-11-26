@@ -1,36 +1,38 @@
-import {NextFunction, Request, Response} from "express";
+import express, { NextFunction, Request, Response } from 'express'
+const finnhub = require('finnhub');
+
+
+const FINNHUB_API_KEY = finnhub.ApiClient.instance.authentications['api_key'];
+FINNHUB_API_KEY.apiKey = "bv4mnbf48v6qpate9n30"
+const finnhubClient = new finnhub.DefaultApi()
+
 
 type ControllerTypes = {
     findPrice: (req: Request, res: Response, next: NextFunction) => void
     findSymbol: (req: Request, res: Response, next: NextFunction) => void
 }
 
-type SymbolResponseTypes ={
+const finnhubController: ControllerTypes = {} as ControllerTypes;
+
+type SymbolResponseTypes = {
     description: string,
     displaySymbol: string,
     symbol: string,
     type: string
 }
 
-const finnhub = require('finnhub');
-
-const FINNHUB_API_KEY = finnhub.ApiClient.instance.authentication['api_key'];
-FINNHUB_API_KEY.api_key = "bv4mnbf48v6qpate9n30"
-
-const finnhubClient = new finnhub.DefaultApi();
-const finnhubController: ControllerTypes = {} as ControllerTypes;
-
-finnhubController.findPrice = async(req:Request, res: Response, next:NextFunction) =>{
-    console.log('body', req.body);
+finnhubController.findPrice = async (req: Request, res: Response, next: NextFunction) => {
+    
+    console.log('body', req.body)
     const symbol = req.body.symbol || 'Default Symbol'
-
+    
     let promiseResolve: any, promiseReject;
     let promise = new Promise(function (resolve, reject) {
         promiseResolve = resolve;
         promiseReject = reject;
     });
-
-    finnhubClient.quote(symbol,(error:any, data:any, response:any) =>{
+     finnhubClient.quote(symbol, (error: any, data: any, response: any) => {
+        console.log('data', data)
         if (data.d === null) {
             next({
                 log: 'Entered Symbol not Found.',
@@ -45,21 +47,25 @@ finnhubController.findPrice = async(req:Request, res: Response, next:NextFunctio
             return next()
         }
     })
-    return promise;
-};
 
-finnhubController.findSymbol = (req:Request, res:Response, next:NextFunction) => {
+    
+    
+    return promise
+
+}
+
+finnhubController.findSymbol = (req: Request, res: Response, next: NextFunction) => {
     const symbol = req.body.symbol || 'Default Symbol'
-
     let promiseResolve: any, promiseReject;
     let promise = new Promise(function (resolve, reject) {
         promiseResolve = resolve;
         promiseReject = reject;
     });
-    
+
+    // invoke the finnhub API to get the full name of a symbol
     finnhubClient.symbolSearch(symbol, (error: any, data: any, response: any) => {
-        
-        const results = data.result.find((element: SymbolResponseTypes) => {
+        // the function below sorts through the incoming data and returns the object which matches the ticker symbol
+        const results = data.result.find((element: SymbolResponseTypes, index: number) => {
             return element.symbol === symbol;
         })
         if (results) {
@@ -70,10 +76,10 @@ finnhubController.findSymbol = (req:Request, res:Response, next:NextFunction) =>
         promiseResolve()
         return next()
     });
-    return promise;
+
+    // The promises below are to facilitate testing   
+  
+    return promise
 }
 
-export default finnhubController;
-
-
-
+export default finnhubController
