@@ -5,7 +5,7 @@ export interface StockData {
     symbol:string;
     price:number;
     changePercent:number;
-    currentTime:number;
+    currentTime:string;
     success: boolean;
 }
 
