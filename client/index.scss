@@ -16,3 +16,19 @@ body {
   padding: 1rem;
   color: white;
 }
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.loader {
+  border: 6px solid #33dc9f;
+  border-top: 6px solid #031c10;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 10%;
+  animation: spin 1s linear infinite;
+}
