@@ -2,10 +2,6 @@
 
 A simple web based React application that takes a stock ticker symbol as input, and displays the stock’s latest quote price.
 
-# Demo Link
-
-https://stock-ticker-maanilverma.netlify.app
-
 # How to run the app
 
 Clone the repo from GitHub -
